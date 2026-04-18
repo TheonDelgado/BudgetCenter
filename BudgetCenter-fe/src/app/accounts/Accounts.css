@@ -1,0 +1,35 @@
+tbody tr:hover {
+  background: #f1f1f1;
+}
+
+.accounts {
+    background-color: white;
+    color: black;
+    margin: 2rem;
+}
+
+.welcome-text {
+    font-size: 14px;
+}
+
+.main-header {
+    font-size: 36px;
+}
+
+.top-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.bottom-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.add-account-button {
+    align-self: center;
+}
+
+.search-box {
+    background-color: white;
+}
