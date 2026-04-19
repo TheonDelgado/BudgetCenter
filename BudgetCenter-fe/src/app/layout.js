@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import FlyonuiScript from "./components/FlyonuiScript";
-import Sidebar from "./components/Sidebar/Sidebar";
+import FlyonuiScript from "../components/FlyonuiScript";
+import Sidebar from "../components/Sidebar/Sidebar";
 
 
 

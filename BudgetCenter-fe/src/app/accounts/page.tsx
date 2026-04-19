@@ -13,6 +13,42 @@ import { exchangePublicToken, fetchLinkToken, resetLinkTokenRequest } from "../s
 import { getAccounts } from "../services/accounts.service"
 import "./Accounts.css"
 
+function PlaidLinkReadyState({
+    linkToken,
+    onLinkSuccess,
+    onLinkExit,
+}: {
+    linkToken: string;
+    onLinkSuccess: PlaidLinkOnSuccess;
+    onLinkExit: PlaidLinkOnExit;
+}) {
+    const { open, ready } = usePlaidLink({
+        token: linkToken,
+        onSuccess: onLinkSuccess,
+        onExit: onLinkExit,
+        onEvent: () => { },
+    });
+
+    return (
+        <>
+            <div className="top-header">
+                <h1 className="main-header">Manage Your Accounts</h1>
+                <button className="btn btn-info add-account-button" onClick={() => open()} disabled={!ready}>
+                    <span className="icon-[tabler--plus-filled]"></span>
+                    <span>Add New Account</span>
+                </button>
+            </div>
+
+            <div className="bottom-header pt-4">
+                <button className="btn btn-info add-account-button" onClick={() => open()} disabled={!ready}>
+                    <span className="icon-[tabler--plus-filled]"></span>
+                    <span>Add New Account</span>
+                </button>
+                <input type="text" placeholder="Search for Account" className="input max-w-sm search-box" />
+            </div>
+        </>
+    )
+}
 
 export default function Accounts() {
 
@@ -52,20 +88,14 @@ export default function Accounts() {
     const onSuccess = useCallback<PlaidLinkOnSuccess>(
         async (publicToken: string, metadata: PlaidLinkOnSuccessMetadata) => {
             try {
-                const response = await exchangePublicToken(publicToken);
-                const accessToken = response.accessToken;
-
-                if (!localStorage.getItem("accessToken")) {
-                    localStorage.setItem("accessToken", accessToken);
-                }
+                await exchangePublicToken(publicToken);
+                const accounts = await getAccounts();
+                console.log(accounts);
 
             } catch (error) {
                 const message = error instanceof Error ? error.message : 'Failed to exchange public token';
                 setLinkError(message);
             }
-
-            const accounts = await getAccounts({accessToken: localStorage.getItem("accessToken")});
-            console.log(accounts);
         },
         [],
     );
@@ -80,35 +110,28 @@ export default function Accounts() {
         [],
     );
 
-    const { open, ready } = usePlaidLink({
-        token: linkToken,
-        onSuccess,
-        onExit,
-        onEvent: () => { },
-    });
-
     return (
         <div className="accounts">
 
             <h4 className="welcome-text">Welcome User</h4>
 
-            <div className="top-header">
-                <h1 className="main-header">Manage Your Accounts</h1>
-                <button className="btn btn-info add-account-button" onClick={() => open()} disabled={!ready || !linkToken}>
-                    <span className="icon-[tabler--plus-filled]"></span>
-                    <span>Add New Account</span>
-                </button>
-            </div>
+            {linkToken ? <PlaidLinkReadyState linkToken={linkToken} onLinkSuccess={onSuccess} onLinkExit={onExit} /> : <>
+                <div className="top-header">
+                    <h1 className="main-header">Manage Your Accounts</h1>
+                    <button className="btn btn-info add-account-button" disabled>
+                        <span className="icon-[tabler--plus-filled]"></span>
+                        <span>Add New Account</span>
+                    </button>
+                </div>
 
-            {linkError ? <p>{linkError}</p> : null}
-
-            <div className="bottom-header pt-4">
-                <button className="btn btn-info add-account-button" onClick={() => open()} disabled={!ready || !linkToken}>
-                    <span className="icon-[tabler--plus-filled]"></span>
-                    <span>Add New Account</span>
-                </button>
-                <input type="text" placeholder="Search for Account" className="input max-w-sm search-box" />
-            </div>
+                <div className="bottom-header pt-4">
+                    <button className="btn btn-info add-account-button" disabled>
+                        <span className="icon-[tabler--plus-filled]"></span>
+                        <span>Add New Account</span>
+                    </button>
+                    <input type="text" placeholder="Search for Account" className="input max-w-sm search-box" />
+                </div>
+            </>}
 
             <div className="w-full overflow-x-auto py-6 px-2">
                 <table className="table">

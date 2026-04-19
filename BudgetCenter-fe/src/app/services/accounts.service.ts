@@ -1,15 +1,5 @@
-export async function getAccounts(params? : { accessToken?: string }) {
-    const url = new URL('http://localhost:8000/accounts');
-
-    if(!params?.accessToken) {
-        console.log("No access token provided.");
-        return
-    }
-    else {
-        url.searchParams.set('accessToken', params.accessToken);
-    }
-
-    const response = await fetch(url.toString());
+export async function getAccounts() {
+    const response = await fetch('http://localhost:8000/accounts');
 
     if (!response.ok) {
         throw new Error('Failed to fetch accounts');

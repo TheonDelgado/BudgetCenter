@@ -1,19 +1,13 @@
 require('dotenv').config();
 const { client, PLAID_PRODUCTS, PLAID_COUNTRY_CODES } = require('../plaid.client');
 const prisma = require('../../db.js');
-
-
-let ACCESS_TOKEN = null;
-let USER_TOKEN = null;
-let USER_ID = null;
-let PUBLIC_TOKEN = null;
-let ITEM_ID = null;
-let ACCOUNT_ID = null;
+const { ensureDefaultUser } = require('../users/defaultUser');
 
 async function createLink(req, res) {
     try {
+        const user = await ensureDefaultUser();
         const response = await client.linkTokenCreate({
-            user: { client_user_id: 'user1' }, // Must be unique to the user
+            user: { client_user_id: String(user.id) },
             client_name: 'BudgetCenter',
             products: PLAID_PRODUCTS, // Specify required products
             country_codes: PLAID_COUNTRY_CODES,
@@ -40,26 +34,54 @@ async function exchangeLink(req, res) {
     }
 
     try {
+        const currentUser = await ensureDefaultUser();
         const tokenResponse = await client.itemPublicTokenExchange({
             public_token: publicToken,
         });
 
-        // These values should be saved to a persistent database and
-        // associated with the currently signed-in user
         const accessToken = tokenResponse.data.access_token;
-        const itemID = tokenResponse.data.item_id;
+        const itemId = tokenResponse.data.item_id;
+        const itemResponse = await client.itemGet({
+            access_token: accessToken,
+        });
+        const institutionId = itemResponse.data.item.institution_id;
+        const user = await prisma.user.findUnique({
+            where: { id: currentUser.id },
+            select: {
+                id: true,
+                plaidItems: {
+                    where: { institutionId },
+                    select: { id: true },
+                },
+            },
+        });
 
-        if (false) {
-            res.json({ error: "No access token found" });
-            return;
+        if (user.plaidItems.length > 0) {
+            return res.status(409).json({
+                error: 'This institution is already linked for the user',
+            });
         }
 
-        await prisma.user.update({ where: {id : 1}, data: { accessToken } });
+        const linkedItem = await prisma.plaidItem.create({
+            data: {
+                userId: user.id,
+                accessToken,
+                itemId,
+                institutionId: itemResponse.data.item.institution_id,
+            },
+            select: {
+                id: true,
+                itemId: true,
+            },
+        });
 
-        res.json({ message: "Access Token created." });
+        return res.json({
+            message: 'Access token stored.',
+            item: linkedItem,
+        });
 
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             error: 'Failed to exchange public token',
             details: error.message,
         });
