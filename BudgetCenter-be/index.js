@@ -1,14 +1,15 @@
 const express = require("express");
 const cors = require('cors');
 const app = express();
-const { createLinkController } = require("./link-handler/createLinkController");
+const { createLink, exchangeLink } = require("./link-handler/linkController.js");
 
 const APP_PORT = process.env.APP_PORT || 8000;
 
 app.use(cors());
 app.use(express.json());
 
-app.post('/create-link', createLinkController)
+app.post('/create-link', createLink);
+app.post('/exchange-token', exchangeLink);
 
 app.listen(APP_PORT, () => {
   console.log(`Server is listening on Port ${APP_PORT}`);
