@@ -3,7 +3,7 @@ const { client } = require('../plaid.client');
 
 async function getAccounts(req, res) {
     const request = {
-        access_token: req.query.accessToken
+        accessToken: "fetus"
     }
     try {
         const response = await client.accountsGet(request);

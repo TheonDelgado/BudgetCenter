@@ -4,3 +4,5 @@ BudgetCenter-fe/.next/dev/cache/turbopack/2275bd85/00005467.sst
 /BudgetCenter-fe/.next
 /BudgetCenter-fe/node_modules
 BudgetCenter-be/.env
+/BudgetCenter-be/node_modules
+BudgetCenter-be/src/.env

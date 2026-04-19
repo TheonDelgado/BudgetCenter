@@ -1,4 +1,14 @@
-require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
+
+const envPath = [
+    path.resolve(__dirname, '.env'),
+    path.resolve(__dirname, '../.env'),
+].find((candidate) => fs.existsSync(candidate));
+
+if (envPath) {
+    require('dotenv').config({ path: envPath });
+}
 const { Configuration, PlaidApi, PlaidEnvironments } = require('plaid');
 
 const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;

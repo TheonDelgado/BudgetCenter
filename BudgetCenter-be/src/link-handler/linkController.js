@@ -1,5 +1,7 @@
 require('dotenv').config();
 const { client, PLAID_PRODUCTS, PLAID_COUNTRY_CODES } = require('../plaid.client');
+const prisma = require('../../db.js');
+
 
 let ACCESS_TOKEN = null;
 let USER_TOKEN = null;
@@ -47,10 +49,15 @@ async function exchangeLink(req, res) {
         const accessToken = tokenResponse.data.access_token;
         const itemID = tokenResponse.data.item_id;
 
-        res.json({
-            accessToken : accessToken,
-            itemID : itemID
-        });
+        if (false) {
+            res.json({ error: "No access token found" });
+            return;
+        }
+
+        await prisma.user.update({ where: {id : 1}, data: { accessToken } });
+
+        res.json({ message: "Access Token created." });
+
     } catch (error) {
         res.status(500).json({
             error: 'Failed to exchange public token',
