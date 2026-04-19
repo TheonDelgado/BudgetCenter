@@ -2,49 +2,43 @@
 
 import React, { useCallback, useEffect, useState } from "react"
 import {
-    usePlaidLink,
-    PlaidLinkOptions,
-    PlaidLinkOnSuccess,
-    PlaidLinkOnSuccessMetadata,
+    PlaidLinkError,
     PlaidLinkOnExit,
     PlaidLinkOnExitMetadata,
-    PlaidLinkError,
+    PlaidLinkOnSuccess,
+    PlaidLinkOnSuccessMetadata,
+    usePlaidLink,
 } from "react-plaid-link"
+import { exchangePublicToken, fetchLinkToken, resetLinkTokenRequest } from "../services/link.service"
 import "./Accounts.css"
-
-let linkTokenRequest: Promise<string> | null = null;
 
 
 export default function Accounts() {
 
     const [linkToken, setLinkToken] = useState<string | null>(null);
-
-    const fetchLinkToken = async () => {
-            if (!linkTokenRequest) {
-                linkTokenRequest = fetch('http://localhost:8000/create-link', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                })
-                    .then((response) => response.json())
-                    .then((data) => data.link_token);
-            }
-
-                    return linkTokenRequest;
-        };
+    const [linkError, setLinkError] = useState<string | null>(null);
 
     useEffect(() => {
         let isMounted = true;
 
         const loadLinkToken = async () => {
-            const token = await fetchLinkToken();
+            try {
+                const token = await fetchLinkToken();
 
-            if (!isMounted) {
-                return;
+                if (!isMounted) {
+                    return;
+                }
+
+                setLinkToken(token ?? null);
+                setLinkError(null);
+            } catch (error) {
+                if (!isMounted) {
+                    return;
+                }
+
+                const message = error instanceof Error ? error.message : 'Failed to load link token';
+                setLinkError(message);
             }
-
-            setLinkToken(token ?? null);
         };
 
         loadLinkToken();
@@ -55,40 +49,41 @@ export default function Accounts() {
     }, [])
 
     const onSuccess = useCallback<PlaidLinkOnSuccess>(
-        (public_token: string, metadata: PlaidLinkOnSuccessMetadata) => {
-            fetch('http://localhost:8000/exchange-token', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    public_token,
-                }),
-            });
+        async (publicToken: string, metadata: PlaidLinkOnSuccessMetadata) => {
+            try {
+                const response = await exchangePublicToken(publicToken);
+                const accessToken = response.accessToken;
+
+                console.log(accessToken);
+
+                if (!localStorage.getItem("accessToken")) {
+                    localStorage.setItem("accessToken", accessToken);
+                }
+
+            } catch (error) {
+                const message = error instanceof Error ? error.message : 'Failed to exchange public token';
+                setLinkError(message);
+            }
         },
         [],
     );
 
     const onExit = useCallback<PlaidLinkOnExit>(
-        (error: PlaidLinkError, metadata: PlaidLinkOnExitMetadata) => {
-            // log and save error and metadata
-            // handle invalid link token
-            if (error != null && error.error_code === 'INVALID_LINK_TOKEN') {
-                // generate new link token
+        (error: PlaidLinkError | null, metadata: PlaidLinkOnExitMetadata) => {
+            if (error?.error_code === 'INVALID_LINK_TOKEN') {
+                resetLinkTokenRequest();
+                setLinkToken(null);
             }
-            // to handle other error codes, see https://plaid.com/docs/errors/
         },
         [],
     );
 
-    const config: PlaidLinkOptions = {
+    const { open, ready } = usePlaidLink({
+        token: linkToken,
         onSuccess,
         onExit,
-        onEvent: (eventName, metadata) => { },
-        token: linkToken,
-    };
-
-    const { open, exit, ready } = usePlaidLink(config);
+        onEvent: () => { },
+    });
 
     return (
         <div className="accounts">
@@ -102,6 +97,8 @@ export default function Accounts() {
                     <span>Add New Account</span>
                 </button>
             </div>
+
+            {linkError ? <p>{linkError}</p> : null}
 
             <div className="bottom-header pt-4">
                 <button className="btn btn-info add-account-button" onClick={() => open()} disabled={!ready || !linkToken}>
