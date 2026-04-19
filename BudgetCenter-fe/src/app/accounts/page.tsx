@@ -10,6 +10,7 @@ import {
     usePlaidLink,
 } from "react-plaid-link"
 import { exchangePublicToken, fetchLinkToken, resetLinkTokenRequest } from "../services/link.service"
+import { getAccounts } from "../services/accounts.service"
 import "./Accounts.css"
 
 
@@ -54,8 +55,6 @@ export default function Accounts() {
                 const response = await exchangePublicToken(publicToken);
                 const accessToken = response.accessToken;
 
-                console.log(accessToken);
-
                 if (!localStorage.getItem("accessToken")) {
                     localStorage.setItem("accessToken", accessToken);
                 }
@@ -64,12 +63,15 @@ export default function Accounts() {
                 const message = error instanceof Error ? error.message : 'Failed to exchange public token';
                 setLinkError(message);
             }
+
+            const accounts = await getAccounts({accessToken: localStorage.getItem("accessToken")});
+            console.log(accounts);
         },
         [],
     );
 
     const onExit = useCallback<PlaidLinkOnExit>(
-        (error: PlaidLinkError | null, metadata: PlaidLinkOnExitMetadata) => {
+       async (error: PlaidLinkError | null, metadata: PlaidLinkOnExitMetadata) => {
             if (error?.error_code === 'INVALID_LINK_TOKEN') {
                 resetLinkTokenRequest();
                 setLinkToken(null);
