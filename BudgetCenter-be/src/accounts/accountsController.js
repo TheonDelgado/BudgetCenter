@@ -14,16 +14,11 @@ async function getAccounts(req, res) {
                         id: true,
                         accessToken: true,
                         itemId: true,
+                        institutionName: true,
                     },
                 },
             },
         });
-
-        if (user.plaidItems.length === 0) {
-            return res.status(404).json({
-                error: 'No linked institutions found for user',
-            });
-        }
 
         const accountResponses = await Promise.all(
             user.plaidItems.map(async (plaidItem) => {
@@ -35,6 +30,7 @@ async function getAccounts(req, res) {
                     ...account,
                     budgetCenterItemId: plaidItem.id,
                     plaidItemId: plaidItem.itemId,
+                    institutionName: plaidItem.institutionName,
                 }));
             }),
         );

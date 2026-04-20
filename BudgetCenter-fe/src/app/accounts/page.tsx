@@ -10,7 +10,7 @@ import {
     usePlaidLink,
 } from "react-plaid-link"
 import { exchangePublicToken, fetchLinkToken, resetLinkTokenRequest } from "../services/link.service"
-import { getAccounts } from "../services/accounts.service"
+import { useAccountsContext } from "../../context/accounts-context"
 import "./Accounts.css"
 
 function PlaidLinkReadyState({
@@ -51,6 +51,7 @@ function PlaidLinkReadyState({
 }
 
 export default function Accounts() {
+    const { accounts, isLoading, error: accountsError, refreshAccounts } = useAccountsContext();
 
     const [linkToken, setLinkToken] = useState<string | null>(null);
     const [linkError, setLinkError] = useState<string | null>(null);
@@ -89,15 +90,13 @@ export default function Accounts() {
         async (publicToken: string, metadata: PlaidLinkOnSuccessMetadata) => {
             try {
                 await exchangePublicToken(publicToken);
-                const accounts = await getAccounts();
-                console.log(accounts);
-
+                await refreshAccounts();
             } catch (error) {
                 const message = error instanceof Error ? error.message : 'Failed to exchange public token';
                 setLinkError(message);
             }
         },
-        [],
+        [refreshAccounts],
     );
 
     const onExit = useCallback<PlaidLinkOnExit>(
@@ -114,6 +113,9 @@ export default function Accounts() {
         <div className="accounts">
 
             <h4 className="welcome-text">Welcome User</h4>
+
+            {linkError ? <div className="alert alert-soft alert-error my-4">{linkError}</div> : null}
+            {!linkError && accountsError ? <div className="alert alert-soft alert-warning my-4">{accountsError}</div> : null}
 
             {linkToken ? <PlaidLinkReadyState linkToken={linkToken} onLinkSuccess={onSuccess} onLinkExit={onExit} /> : <>
                 <div className="top-header">
@@ -146,17 +148,31 @@ export default function Accounts() {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr className="row-hover">
-                            <td>John Doe</td>
-                            <td>johndoe@example.com</td>
-                            <td><span className="badge badge-soft text-xs" style={{ color: "white", background: "#27d87a" }}>Checking</span></td>
-                            <td>March 1, 2024</td>
-                            <td>
-                                <button className="btn btn-circle btn-text btn-sm" aria-label="Action button"><span className="icon-[tabler--pencil] size-5"></span></button>
-                                <button className="btn btn-circle btn-text btn-sm" aria-label="Action button"><span className="icon-[tabler--trash] size-5"></span></button>
-                                <button className="btn btn-circle btn-text btn-sm" aria-label="Action button"><span className="icon-[tabler--dots-vertical] size-5"></span></button>
-                            </td>
-                        </tr>
+                        {isLoading ? <tr>
+                            <td colSpan={6}>Loading accounts...</td>
+                        </tr> : null}
+
+                        {!isLoading && accounts.length === 0 ? <tr>
+                            <td colSpan={6}>No accounts linked yet.</td>
+                        </tr> : null}
+
+                        {!isLoading ? accounts.map((account) => {
+                            const currentBalance = account.balances?.current;
+                            const currency = account.balances?.iso_currency_code ?? account.balances?.unofficial_currency_code ?? 'USD';
+
+                            return (
+                                <tr className="row-hover" key={account.account_id}>
+                                    <td>{account.name}</td>
+                                    <td>{account.institutionName ?? 'Linked institution'}</td>
+                                    <td><span className="badge badge-soft text-xs" style={{ color: "white", background: "#27d87a" }}>{account.subtype ?? account.type}</span></td>
+                                    <td>{typeof currentBalance === 'number' ? new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(currentBalance) : 'Unavailable'}</td>
+                                    <td>Linked</td>
+                                    <td>
+                                        <button className="btn btn-circle btn-text btn-sm" aria-label="View account options"><span className="icon-[tabler--dots-vertical] size-5"></span></button>
+                                    </td>
+                                </tr>
+                            );
+                        }) : null}
                     </tbody>
                 </table>
             </div>

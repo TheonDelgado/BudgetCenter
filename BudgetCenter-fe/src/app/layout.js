@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import FlyonuiScript from "../components/FlyonuiScript";
 import Sidebar from "../components/Sidebar/Sidebar";
+import AppProviders from "../context/AppProviders";
 
 
 
@@ -27,7 +28,9 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <Sidebar>{children}</Sidebar>
+        <AppProviders>
+          <Sidebar>{children}</Sidebar>
+        </AppProviders>
         <FlyonuiScript />
       </body>
     </html>

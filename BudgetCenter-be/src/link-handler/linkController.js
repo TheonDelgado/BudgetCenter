@@ -45,6 +45,7 @@ async function exchangeLink(req, res) {
             access_token: accessToken,
         });
         const institutionId = itemResponse.data.item.institution_id;
+        const institutionName = itemResponse.data.item.institution_name;
         const user = await prisma.user.findUnique({
             where: { id: currentUser.id },
             select: {
@@ -67,11 +68,13 @@ async function exchangeLink(req, res) {
                 userId: user.id,
                 accessToken,
                 itemId,
-                institutionId: itemResponse.data.item.institution_id,
+                institutionId,
+                institutionName,
             },
             select: {
                 id: true,
                 itemId: true,
+                institutionName: true,
             },
         });
 
