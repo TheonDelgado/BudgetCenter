@@ -1,9 +1,10 @@
-.home {
-    width: 100%;
-    height: 100%;
-    background-color: rgb(255, 255, 255);
+.dashboard {
+    background-color: white;
+    color: black;
+    margin: 2rem;
 }
 
-.texter {
-    color: black;
+.cards-row {
+    display: flex;
+    justify-content: space-evenly;
 }
