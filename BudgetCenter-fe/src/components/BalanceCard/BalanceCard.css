@@ -1,0 +1,13 @@
+.card {
+    background-color: white;
+    color: black;
+}
+
+.card-title {
+    color: black;
+}
+
+.foot {
+    display: flex;
+    justify-content: space-between;
+}

@@ -8,3 +8,16 @@
     display: flex;
     justify-content: space-evenly;
 }
+
+.welcome-text {
+    font-size: 14px;
+}
+
+.main-header {
+    font-size: 36px;
+}
+
+.top-header {
+    display: flex;
+    justify-content: space-between;
+}

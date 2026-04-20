@@ -1,4 +1,5 @@
 
+import BalanceCard from "../components/BalanceCard/BalanceCard";
 import "./Home.css"
 
 export default function Home() {
@@ -16,7 +17,7 @@ export default function Home() {
       </div>
 
       <div className="cards-row">
-        
+        <BalanceCard/>
       </div>
 
     </div>
