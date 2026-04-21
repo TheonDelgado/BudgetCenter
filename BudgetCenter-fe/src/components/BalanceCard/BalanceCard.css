@@ -3,11 +3,46 @@
     color: black;
 }
 
+.card-body {
+    display: flex;
+    
+}
+
+.card-xs {
+    width: 18rem;
+}
+
 .card-title {
     color: black;
+    align-self: center;   
+}
+
+.head {
+    display: flex;
+    justify-content: space-between;
 }
 
 .foot {
     display: flex;
     justify-content: space-between;
+}
+
+.balance-number {
+    font-size: 26px;
+    justify-self: center;
+    align-self: center;
+}
+
+.balance-percent {
+    font-size: 18px;
+    color: green;
+    justify-self: center;
+    align-self: center;   
+}
+
+.balance-icon {
+    font-size: 24px;
+    color: grey;
+    justify-self: center;
+    align-self: center;   
 }
