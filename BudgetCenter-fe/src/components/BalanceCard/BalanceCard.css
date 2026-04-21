@@ -20,6 +20,7 @@
 .head {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .foot {
@@ -34,10 +35,12 @@
 }
 
 .balance-percent {
+    display: flex;
     font-size: 18px;
     color: green;
     justify-self: center;
     align-self: center;   
+    align-items: center;
 }
 
 .balance-icon {
