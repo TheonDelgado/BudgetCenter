@@ -1,4 +1,5 @@
 
+import BudgetCard from "../components/BudgetCard/BudgetCard";
 import BalanceCard from "../components/BalanceCard/BalanceCard";
 import "./Home.css"
 
@@ -18,6 +19,7 @@ export default function Home() {
 
       <div className="cards-row">
         <BalanceCard/>
+        <BudgetCard/>
       </div>
 
     </div>

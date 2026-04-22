@@ -1,0 +1,46 @@
+.card {
+    background-color: white;
+    color: black;
+}
+
+.card-body {
+    display: flex;
+    
+}
+
+.card-xs {
+    width: 18rem;
+}
+
+.card-title {
+    color: black;
+    align-self: center;   
+}
+
+.bottom {
+    display: flex;
+    flex-direction: column;
+}
+
+.spent-budget {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.budget-percent {
+    font-size: 16px;
+    color: grey;
+}
+
+.spent, .budget, .spent-num, .budget-num, .slash {
+    font-size: 16px;
+}
+
+.progress {
+    background-color: rgb(227, 226, 226);
+}
+
+.progress-bar {
+    background-color: rgb(12, 152, 119);
+}
