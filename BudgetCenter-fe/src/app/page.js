@@ -1,6 +1,8 @@
 
 import BudgetCard from "../components/BudgetCard/BudgetCard";
 import BalanceCard from "../components/BalanceCard/BalanceCard";
+import SavingsCard from "../components/SavingsCard/SavingsCard";
+import BudgetDropdown from "../components/BudgetDropdown/BudgetDropdown";
 import "./Home.css"
 
 export default function Home() {
@@ -11,15 +13,13 @@ export default function Home() {
 
       <div className="top-header">
         <h1 className="main-header">Financial Dashboard</h1>
-        <button className="btn add-account-button">
-          <span>May 2026</span>
-          <span className="icon-[tabler--chevron-down-filled]"></span>
-        </button>
+        <BudgetDropdown/>
       </div>
 
       <div className="cards-row">
         <BalanceCard/>
         <BudgetCard/>
+        <SavingsCard/>
       </div>
 
     </div>

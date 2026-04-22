@@ -21,3 +21,7 @@
     display: flex;
     justify-content: space-between;
 }
+
+.budget-dropdown {
+    background-color: white;
+}

@@ -1,4 +1,3 @@
-import React from "react";
 import "./BalanceCard.css";
 
 export default function BalanceCard() {

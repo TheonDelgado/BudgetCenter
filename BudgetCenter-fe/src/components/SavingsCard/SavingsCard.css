@@ -1,0 +1,50 @@
+.card {
+    background-color: white;
+    color: black;
+}
+
+.card-body {
+    display: flex;
+    
+}
+
+.card-xs {
+    width: 18rem;
+}
+
+.card-title {
+    color: black;
+    align-self: center;   
+}
+
+.lower {
+    display: flex;
+    flex-direction: column;
+}
+
+.savings-nums {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.savings-percent {
+    font-size: 16px;
+    color: grey;
+}
+
+.savings-icon {
+    font-size: 24px;
+    color: grey;
+    justify-self: center;
+    align-self: center;   
+}
+
+.saved-num, .saved-goal-num {
+    font-size: 16px;
+}
+
+
+
+
+

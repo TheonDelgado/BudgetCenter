@@ -1,0 +1,7 @@
+.dropdown-toggle, .dropdown-menu {
+    background-color: white;
+}
+
+.dropdown-item {
+    color: black;
+}
