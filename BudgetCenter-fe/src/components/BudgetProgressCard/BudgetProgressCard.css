@@ -3,6 +3,11 @@
 }
 
 .budget-progress-card__card {
-    width: 100%;
+    width: 100% !important;
     max-width: none;
+}
+
+.budget-progress-card__card .card-body {
+    display: flex;
+    flex-direction: column;
 }

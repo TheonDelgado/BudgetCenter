@@ -2,8 +2,8 @@ import "./BudgetProgressCard.css";
 
 export default function BudgetProgressCard() {
     return (
-        <div className="budget-progress-card mt-2">
-            <div className="budget-progress-card__card card card-xs m-2 w-full">
+        <div className="budget-progress-card my-2">
+            <div className="budget-progress-card__card card w-full">
                 <div className="card-body">
                     <div className="mb-2.5 px-2 head">
                         <h5 className="card-title">October Budget</h5>
