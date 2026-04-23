@@ -5,9 +5,8 @@ import BalanceCard from "../components/BalanceCard/BalanceCard";
 import SavingsCard from "../components/SavingsCard/SavingsCard";
 import BudgetDropdown from "../components/BudgetDropdown/BudgetDropdown";
 import "./Home.css"
-import "../../public/budgetChart"
 import { useEffect } from "react";
-import { renderChart } from "../../public/budgetChart";
+import { renderChart } from "../utils/budgetChart";
 
 export default function Home() {
   useEffect(() => {

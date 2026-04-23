@@ -1,0 +1,40 @@
+.modal-dialog {
+    max-width: 70%;
+    margin-left: 16rem;
+    
+}
+
+.modal-content {
+    background-color: white;   
+}
+
+.modal-title {
+    color: black;
+}
+
+.modal-body {
+    height: 24rem;
+}
+
+.budget-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.budget-form label {
+    display: block;
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 20px;
+}
+
+.budget-form .select {
+    width: 100%;
+    max-width: none;
+}
+
+.input, .select {
+    background-color: white;
+    color: black;
+}

@@ -5,6 +5,7 @@ import BudgetDropdown from "../../components/BudgetDropdown/BudgetDropdown";
 import "./budgets.css"
 import BudgetProgressCard from "../../components/BudgetProgressCard/BudgetProgressCard";
 import BudgetCard from "../../components/BudgetCard/BudgetCard";
+import AddButtonModal from "../../components/AddBudgetModal/AddBudgetModal";
 
 export default function Budgets() {
     return (
@@ -18,11 +19,13 @@ export default function Budgets() {
             </div>
 
             <div className="bottom-part pt-4">
-                <button className="btn btn-info add-account-button">
+                <button type="button" className="btn btn-primary" aria-haspopup="dialog" aria-expanded="false" aria-controls="slide-up-animated-modal" data-overlay="#slide-up-animated-modal">
                     <span className="icon-[tabler--plus-filled]"></span>
-                    <span>Add New Account</span>
+                    <span>Add New Budget</span>
                 </button>
             </div>
+
+            <AddButtonModal/>
 
             <BudgetProgressCard />
 
@@ -32,14 +35,14 @@ export default function Budgets() {
                         {/* Slide 1 */}
                         <div className="carousel-slide">
                             <div className="flex justify-center p-2">
-                                <BudgetCard/>
-                                <BudgetCard/>
-                                <BudgetCard/>
+                                <BudgetCard />
+                                <BudgetCard />
+                                <BudgetCard />
                             </div>
-                             <div className="flex justify-center p-2">
-                                <BudgetCard/>
-                                <BudgetCard/>
-                                <BudgetCard/>
+                            <div className="flex justify-center p-2">
+                                <BudgetCard />
+                                <BudgetCard />
+                                <BudgetCard />
                             </div>
                         </div>
                         {/* Slide 2 */}
