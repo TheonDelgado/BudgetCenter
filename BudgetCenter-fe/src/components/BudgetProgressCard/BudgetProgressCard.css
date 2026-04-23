@@ -1,0 +1,8 @@
+.budget-progress-card {
+    width: 100%;
+}
+
+.budget-progress-card__card {
+    width: 100%;
+    max-width: none;
+}

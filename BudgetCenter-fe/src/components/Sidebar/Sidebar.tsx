@@ -16,6 +16,11 @@ const navItems = [
         label: 'Accounts',
         icon: 'icon-[tabler--user]',
     },
+    {
+        href: '/budgets',
+        label: 'Budgets',
+        icon: 'icon-[tabler--moneybag]'
+    }
 ];
 
 export default function Sidebar({ children }: { children: ReactNode }) {

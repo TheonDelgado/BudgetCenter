@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import {
     PlaidLinkError,
     PlaidLinkOnExit,
@@ -11,7 +11,7 @@ import {
 } from "react-plaid-link"
 import { exchangePublicToken, fetchLinkToken, resetLinkTokenRequest } from "../services/link.service"
 import { useAccountsContext } from "../../context/accounts-context"
-import "./Accounts.css"
+import "./accounts.css"
 
 function PlaidLinkReadyState({
     linkToken,

@@ -1,0 +1,23 @@
+.budgets-page {
+    background-color: white;
+    color: black;
+    margin: 2rem;
+}
+
+.top-part {
+    display: flex;
+    justify-content: space-between;
+}
+
+.bottom-part {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.welcome-text {
+    font-size: 14px;
+}
+
+.main-header {
+    font-size: 36px;
+}
