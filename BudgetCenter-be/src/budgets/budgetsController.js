@@ -1,5 +1,6 @@
 require('dotenv').config();
 const prisma = require('../../db.js');
+const { Prisma } = require('@prisma/client');
 const { ensureDefaultUser } = require('../users/defaultUser');
 
 async function createBudget(req, res) {
@@ -16,7 +17,8 @@ async function createBudget(req, res) {
         const normalizedName = String(name).trim();
         const normalizedStart = String(periodStart).trim();
         const normalizedEnd = String(periodEnd).trim();
-        const numericAmount = Number(amount);
+        const normalizedAmount = String(amount).trim();
+        const numericAmount = Number(normalizedAmount);
 
         if (!normalizedName) {
             return res.status(400).json({
@@ -32,20 +34,20 @@ async function createBudget(req, res) {
             });
         }
 
-        const startDate = new Date(normalizedStart);
-        const endDate = new Date(normalizedEnd);
+        const roundedAmount = numericAmount.toFixed(2);
+        const decimalAmount = new Prisma.Decimal(roundedAmount);
 
-        if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+        if (!normalizedStart) {
             return res.status(400).json({
-                error: 'Invalid period',
-                details: 'periodStart and periodEnd must be valid date strings.',
+                error: 'Invalid periodStart',
+                details: 'periodStart cannot be empty.',
             });
         }
 
-        if (startDate > endDate) {
+        if (!normalizedEnd) {
             return res.status(400).json({
-                error: 'Invalid period range',
-                details: 'periodStart must be less than or equal to periodEnd.',
+                error: 'Invalid periodEnd',
+                details: 'periodEnd cannot be empty.',
             });
         }
 
@@ -54,7 +56,7 @@ async function createBudget(req, res) {
             data: {
                 userId: currentUser.id,
                 name: normalizedName,
-                amount: numericAmount.toString(),
+                amount: decimalAmount,
                 periodStart: normalizedStart,
                 periodEnd: normalizedEnd,
                 createdAt: new Date(),
