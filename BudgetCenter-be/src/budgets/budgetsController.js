@@ -82,6 +82,40 @@ async function createBudget(req, res) {
     }
 }
 
+async function getBudgets(req, res) {
+    try {
+        const currentUser = await ensureDefaultUser();
+        const budgets = await prisma.budget.findMany({
+            where: {
+                userId: currentUser.id,
+            },
+            select: {
+                id: true,
+                userId: true,
+                name: true,
+                amount: true,
+                periodStart: true,
+                periodEnd: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+
+        return res.json(budgets);
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            error: 'Failed to fetch budgets',
+            details: error.message,
+        });
+    }
+}
+
 module.exports = {
     createBudget,
+    getBudgets,
 };
