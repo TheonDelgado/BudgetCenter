@@ -22,6 +22,10 @@ export default function Home() {
         <SavingsCard/>
       </div>
 
+      <div className="budget-chart m-2">
+        <div id="apex-multiple-column-charts" className="w-full"></div>
+      </div>
+
     </div>
   );
 }

@@ -159,12 +159,15 @@ export default function Accounts() {
                         {!isLoading ? accounts.map((account) => {
                             const currentBalance = account.balances?.current;
                             const currency = account.balances?.iso_currency_code ?? account.balances?.unofficial_currency_code ?? 'USD';
+                            
+                            const accountSubtype = account.subtype.charAt(0).toUpperCase() + account.subtype.slice(1);
+                            const accountType = account.type.charAt(0).toUpperCase() + account.type.slice(1);
 
                             return (
                                 <tr className="row-hover" key={account.account_id}>
                                     <td>{account.name}</td>
-                                    <td>{account.institutionName ?? 'Linked institution'}</td>
-                                    <td><span className="badge badge-soft text-xs" style={{ color: "white", background: "#27d87a" }}>{account.subtype ?? account.type}</span></td>
+                                    <td>{ account.institutionName ?? 'Linked institution'}</td>
+                                    <td><span className="badge badge-soft text-xs" style={{ color: "white", background: "#27d87a" }}>{accountSubtype ?? accountType}</span></td>
                                     <td>{typeof currentBalance === 'number' ? new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(currentBalance) : 'Unavailable'}</td>
                                     <td>Linked</td>
                                     <td>
