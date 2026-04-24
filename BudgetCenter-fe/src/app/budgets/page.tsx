@@ -6,8 +6,11 @@ import "./budgets.css"
 import BudgetProgressCard from "../../components/BudgetProgressCard/BudgetProgressCard";
 import BudgetCard from "../../components/BudgetCard/BudgetCard";
 import AddButtonModal from "../../components/AddBudgetModal/AddBudgetModal";
+import { useBudgetContext } from "../../context/budget-context";
 
 export default function Budgets() {
+    const { budgets, isLoading, error: budgetsError, refreshBudgets } = useBudgetContext();
+
     return (
         <div className="budgets-page">
 
@@ -27,7 +30,7 @@ export default function Budgets() {
 
             <AddButtonModal/>
 
-            <BudgetProgressCard />
+            <BudgetProgressCard budget={budgets[0]}/>
 
             <div id="infinite-loop" data-carousel='{ "loadingClasses": "opacity-0", "isInfiniteLoop": true }' className="group relative w-full">
                 <div className="carousel h-80">

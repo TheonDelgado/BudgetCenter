@@ -1,6 +1,6 @@
 import "./BudgetProgressCard.css";
 
-export default function BudgetProgressCard() {
+export default function BudgetProgressCard({ budget }) {
     return (
         <div className="budget-progress-card my-2">
             <div className="budget-progress-card__card card w-full">

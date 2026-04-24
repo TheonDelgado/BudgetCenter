@@ -22,3 +22,15 @@ export async function createBudgetItem(
 
     return response.json();
 }
+
+export async function getBudgetItems() {
+    const response = await fetch('http://localhost:8000/budgets');
+
+    if (!response.ok) {
+        const errorPayload = await response.json().catch(() => null);
+        const message = errorPayload?.error ?? 'Failed to create budget';
+        throw new Error(message);
+    }
+
+    return response.json();
+}

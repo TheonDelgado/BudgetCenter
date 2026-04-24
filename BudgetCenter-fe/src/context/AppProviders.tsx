@@ -2,7 +2,12 @@
 
 import { ReactNode } from 'react'
 import { AccountsProvider } from './accounts-context'
+import { BudgetProvider } from './budget-context'
 
 export default function AppProviders({ children }: { children: ReactNode }) {
-    return <AccountsProvider>{children}</AccountsProvider>
+    return (
+        <AccountsProvider>
+            <BudgetProvider>{children}</BudgetProvider>
+        </AccountsProvider>
+    )
 }

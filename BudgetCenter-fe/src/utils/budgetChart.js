@@ -1,5 +1,17 @@
+let chartInstance = null
+
 export function renderChart() {
-  buildChart('#apex-multiple-column-charts', () => ({
+  if (chartInstance?.destroy) {
+    chartInstance.destroy()
+    chartInstance = null
+  }
+
+  const chartElement = document.querySelector('#apex-multiple-column-charts')
+  if (!chartElement) return null
+
+  chartElement.innerHTML = ''
+
+  chartInstance = buildChart('#apex-multiple-column-charts', () => ({
     chart: {
       type: 'bar',
       height: 400,
@@ -157,4 +169,18 @@ export function renderChart() {
       }
     ]
   }))
+
+  return chartInstance
+}
+
+export function destroyChart() {
+  if (chartInstance?.destroy) {
+    chartInstance.destroy()
+    chartInstance = null
+  }
+
+  const chartElement = document.querySelector('#apex-multiple-column-charts')
+  if (chartElement) {
+    chartElement.innerHTML = ''
+  }
 }
