@@ -18,4 +18,7 @@ export type Transaction = {
     budgetCenterItemId?: number
     plaidItemId?: string | null
     institutionName?: string | null
+    budgetCategoryKey?: string
+    budgetCategoryName?: string
+    isSpending?: boolean
 }

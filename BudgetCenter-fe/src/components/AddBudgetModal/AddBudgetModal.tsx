@@ -1,14 +1,28 @@
 import "./AddBudgetModal.css"
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react"
 import { createBudgetItem } from "../../app/services/budgets.service"
+import { SPENDING_BUDGET_CATEGORY_OPTIONS } from "../../utils/budgetCategoryMap"
+
+function getMonthOptions(baseDate = new Date()) {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        month: 'long',
+        year: 'numeric',
+    })
+
+    return Array.from({ length: 18 }, (_, index) => {
+        const nextDate = new Date(baseDate.getFullYear(), baseDate.getMonth() + index, 1)
+        return formatter.format(nextDate)
+    })
+}
 
 export default function AddButtonModal() {
     const closeModalButtonRef = useRef<HTMLButtonElement | null>(null);
     const [name, setName] = useState("");
+    const [category, setCategory] = useState("");
     const [amount, setAmount] = useState("");
     const [type, setType] = useState("");
-    const [periodStart, setPeriodStart] = useState("");
-    const [periodEnd, setPeriodEnd] = useState("");
+    const [month, setMonth] = useState("");
+    const monthOptions = getMonthOptions()
 
     function handleAmountChange(e: ChangeEvent<HTMLInputElement>) {
         const nextAmount = e.target.value;
@@ -19,12 +33,12 @@ export default function AddButtonModal() {
 
     async function createBudget(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        await createBudgetItem(name, Number(amount), type, periodStart, periodEnd);
+        await createBudgetItem(name, category, Number(amount), type, month);
         setName("");
+        setCategory("");
         setAmount("");
         setType("");
-        setPeriodStart("");
-        setPeriodEnd("");
+        setMonth("");
         closeModalButtonRef.current?.click();
     }
 
@@ -34,7 +48,7 @@ export default function AddButtonModal() {
                 <div className="modal-content">
                     <div className="modal-header">
                         <h3 className="modal-title">Add Budget</h3>
-                        <button type="button" className="btn btn-text btn-circle btn-sm absolute end-3 top-3" aria-label="Close" data-overlay="#slide-up-animated-modal" ref={closeModalButtonRef}>
+                        <button type="button" className="btn btn-text btn-circle btn-sm absolute inset-e-3 top-3" aria-label="Close" data-overlay="#slide-up-animated-modal" ref={closeModalButtonRef}>
                             <span className="icon-[tabler--x] size-4"></span>
                         </button>
                     </div>
@@ -42,6 +56,13 @@ export default function AddButtonModal() {
                         <form onSubmit={createBudget} className="budget-form w-full h-full">
                             <label htmlFor="budget-name" className="budget-name-label">Budget Name</label>
                             <input type="text" id="budget-name" placeholder="Enter Name of Budget" className="input w-full" value={name} onChange={e => setName(e.target.value)} />
+                            <label htmlFor="budget-category" className="budget-type-label">Budget Category</label>
+                            <select id="budget-category" className="select max-w-sm appearance-none" aria-label="select" value={category} onChange={e => setCategory(e.target.value)}>
+                                <option disabled value="">Choose Category:</option>
+                                {SPENDING_BUDGET_CATEGORY_OPTIONS.map(option => (
+                                    <option key={option.key} value={option.name}>{option.name}</option>
+                                ))}
+                            </select>
                             <label htmlFor="budget-amount" className="budget-amount-label">Budget Amount</label>
                             <input type="text" id="budget-amount" placeholder="Enter Amount" className="input w-full" value={amount} inputMode="decimal" onChange={handleAmountChange} />
                             <label htmlFor="budget-type" className="budget-type-label">Budget Type</label>
@@ -50,37 +71,12 @@ export default function AddButtonModal() {
                                 <option>Monthly</option>
                                 <option>Misc</option>
                             </select>
-                            <label htmlFor="start-date" className="start-date-label">Choose a Start Month</label>
-                            <select id="start-date" className="select max-w-sm appearance-none" aria-label="select" value={periodStart} onChange={e => setPeriodStart(e.target.value)}>
-                                <option disabled value="">Choose Start Month:</option>
-                                <option>January</option>
-                                <option>Feburary</option>
-                                <option>March</option>
-                                <option>April</option>
-                                <option>May</option>
-                                <option>June</option>
-                                <option>July</option>
-                                <option>August</option>
-                                <option>September</option>
-                                <option>October</option>
-                                <option>November</option>
-                                <option>December</option>
-                            </select>
-                            <label htmlFor="end-date" className="end-date-label">Choose a End Month</label>
-                            <select id="end-date" className="select max-w-sm appearance-none" aria-label="select" value={periodEnd} onChange={e => setPeriodEnd(e.target.value)}>
-                                <option disabled value="">Choose Start Month:</option>
-                                <option>January</option>
-                                <option>Feburary</option>
-                                <option>March</option>
-                                <option>April</option>
-                                <option>May</option>
-                                <option>June</option>
-                                <option>July</option>
-                                <option>August</option>
-                                <option>September</option>
-                                <option>October</option>
-                                <option>November</option>
-                                <option>December</option>
+                            <label htmlFor="budget-month" className="start-date-label">Budget Month</label>
+                            <select id="budget-month" className="select max-w-sm appearance-none" aria-label="select" value={month} onChange={e => setMonth(e.target.value)}>
+                                <option disabled value="">Choose Month:</option>
+                                {monthOptions.map(option => (
+                                    <option key={option} value={option}>{option}</option>
+                                ))}
                             </select>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-soft bg-white text-black" data-overlay="#slide-up-animated-modal">

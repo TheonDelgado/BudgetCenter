@@ -2,21 +2,28 @@ require('dotenv').config();
 const prisma = require('../../db.js');
 const { Prisma } = require('@prisma/client');
 const { ensureDefaultUser } = require('../users/defaultUser');
+const { BUDGET_CATEGORY_OPTIONS } = require('../transactions/budgetCategoryMap');
+
+const ALLOWED_BUDGET_CATEGORIES = new Set(
+    BUDGET_CATEGORY_OPTIONS
+        .filter((option) => !['income', 'transfers', 'uncategorized'].includes(option.key))
+        .map((option) => option.name),
+);
 
 async function createBudget(req, res) {
     try {
-        const { name, amount, type, periodStart, periodEnd } = req.body ?? {};
+        const { name, category, amount, type, month } = req.body ?? {};
 
-        if (!name || !amount || !type || !periodStart || !periodEnd) {
+        if (!name || !category || !amount || !type || !month) {
             return res.status(400).json({
                 error: 'Missing required fields',
-                details: 'name, amount, type, periodStart, and periodEnd are required.',
+                details: 'name, category, amount, type, and month are required.',
             });
         }
 
         const normalizedName = String(name).trim();
-        const normalizedStart = String(periodStart).trim();
-        const normalizedEnd = String(periodEnd).trim();
+        const normalizedCategory = String(category).trim();
+        const normalizedMonth = String(month).trim();
         const normalizedAmount = String(amount).trim();
         const normalizedType = String(type).trim();
         const numericAmount = Number(normalizedAmount);
@@ -25,6 +32,20 @@ async function createBudget(req, res) {
             return res.status(400).json({
                 error: 'Invalid name',
                 details: 'name cannot be empty.',
+            });
+        }
+
+        if (!normalizedCategory) {
+            return res.status(400).json({
+                error: 'Invalid category',
+                details: 'category cannot be empty.',
+            });
+        }
+
+        if (!ALLOWED_BUDGET_CATEGORIES.has(normalizedCategory)) {
+            return res.status(400).json({
+                error: 'Invalid category',
+                details: `category must be one of: ${Array.from(ALLOWED_BUDGET_CATEGORIES).join(', ')}`,
             });
         }
 
@@ -38,17 +59,10 @@ async function createBudget(req, res) {
         const roundedAmount = numericAmount.toFixed(2);
         const decimalAmount = new Prisma.Decimal(roundedAmount);
 
-        if (!normalizedStart) {
+        if (!normalizedMonth) {
             return res.status(400).json({
-                error: 'Invalid periodStart',
-                details: 'periodStart cannot be empty.',
-            });
-        }
-
-        if (!normalizedEnd) {
-            return res.status(400).json({
-                error: 'Invalid periodEnd',
-                details: 'periodEnd cannot be empty.',
+                error: 'Invalid month',
+                details: 'month cannot be empty.',
             });
         }
 
@@ -71,20 +85,20 @@ async function createBudget(req, res) {
             data: {
                 userId: currentUser.id,
                 name: normalizedName,
+                category: normalizedCategory,
                 amount: decimalAmount,
                 type: normalizedType,
-                periodStart: normalizedStart,
-                periodEnd: normalizedEnd,
+                month: normalizedMonth,
                 createdAt: new Date(),
             },
             select: {
                 id: true,
                 userId: true,
                 name: true,
+                category: true,
                 amount: true,
                 type: true,
-                periodStart: true,
-                periodEnd: true,
+                month: true,
                 createdAt: true,
                 updatedAt: true,
             },
@@ -112,10 +126,10 @@ async function getBudgets(req, res) {
                 id: true,
                 userId: true,
                 name: true,
+                category: true,
                 amount: true,
                 type: true,
-                periodStart: true,
-                periodEnd: true,
+                month: true,
                 createdAt: true,
                 updatedAt: true,
             },
@@ -124,7 +138,12 @@ async function getBudgets(req, res) {
             },
         });
 
-        return res.json(budgets);
+        const normalizedBudgets = budgets.map((budget) => ({
+            ...budget,
+            category: budget.category || 'Uncategorized',
+        }));
+
+        return res.json(normalizedBudgets);
     }
     catch (error) {
         console.error(error);

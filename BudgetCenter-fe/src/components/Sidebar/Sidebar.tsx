@@ -12,11 +12,6 @@ const navItems = [
         icon: 'icon-[tabler--home]',
     },
     {
-        href: '/accounts',
-        label: 'Accounts',
-        icon: 'icon-[tabler--user]',
-    },
-    {
         href: '/budgets',
         label: 'Budgets',
         icon: 'icon-[tabler--moneybag]'
@@ -25,6 +20,11 @@ const navItems = [
         href: '/transactions',
         label: 'Transactions',
         icon: 'icon-[tabler--receipt]'
+    },
+    {
+        href: '/accounts',
+        label: 'Accounts',
+        icon: 'icon-[tabler--user]',
     }
 ];
 

@@ -1,15 +1,16 @@
 'use client'
 
-import { useCallback, useEffect, useState } from "react";
 import BudgetDropdown from "../../components/BudgetDropdown/BudgetDropdown";
 import "./budgets.css"
 import BudgetProgressCard from "../../components/BudgetProgressCard/BudgetProgressCard";
 import BudgetCard from "../../components/BudgetCard/BudgetCard";
 import AddButtonModal from "../../components/AddBudgetModal/AddBudgetModal";
 import { useBudgetContext } from "../../context/budget-context";
+import { useMonthlyBudgetSummary } from "../../context/monthly-budget-summary";
 
 export default function Budgets() {
-    const { budgets, isLoading, error: budgetsError, refreshBudgets } = useBudgetContext();
+    const { isLoading, error: budgetsError, selectedMonth, setSelectedMonth, monthOptions } = useBudgetContext();
+    const { budgetSummaries, totalSpent, totalBudget, totalPercentUsed } = useMonthlyBudgetSummary()
 
     return (
         <div className="budgets-page">
@@ -18,7 +19,11 @@ export default function Budgets() {
 
             <div className="top-part">
                 <h1 className="main-header">Manage Your Budgets</h1>
-                <BudgetDropdown />
+                <BudgetDropdown
+                    selectedMonth={selectedMonth}
+                    monthOptions={monthOptions}
+                    onMonthChange={setSelectedMonth}
+                />
             </div>
 
             <div className="bottom-part pt-4">
@@ -30,49 +35,35 @@ export default function Budgets() {
 
             <AddButtonModal/>
 
-            <BudgetProgressCard budget={budgets[0]}/>
+            {budgetsError ? <div className="alert alert-soft alert-error mt-4">{budgetsError}</div> : null}
 
-            <div id="infinite-loop" data-carousel='{ "loadingClasses": "opacity-0", "isInfiniteLoop": true }' className="group relative w-full">
-                <div className="carousel h-80">
-                    <div className="carousel-body h-full opacity-0">
-                        {/* Slide 1 */}
-                        <div className="carousel-slide">
-                            <div className="flex justify-center p-2">
-                                <BudgetCard />
-                                <BudgetCard />
-                                <BudgetCard />
-                            </div>
-                            <div className="flex justify-center p-2">
-                                <BudgetCard />
-                                <BudgetCard />
-                                <BudgetCard />
-                            </div>
-                        </div>
-                        {/* Slide 2 */}
-                        <div className="carousel-slide">
-                            <div className="flex h-full justify-center p-6">
-                                <span className="self-center text-2xl sm:text-4xl">Second slide</span>
-                            </div>
-                        </div>
-                        {/* Slide 3 */}
-                        <div className="carousel-slide">
-                            <div className="flex h-full justify-center p-6">
-                                <span className="self-center text-2xl sm:text-4xl">Third slide</span>
-                            </div>
-                        </div>
+            {isLoading ? <div className="text-sm text-gray-500 mt-4">Loading budgets...</div> : null}
+
+            {!isLoading && budgetSummaries.length === 0 ? (
+                <div className="text-sm text-gray-500 mt-4">Create your first budget to start tracking category spending.</div>
+            ) : null}
+
+            {!isLoading && budgetSummaries.length > 0 ? (
+                <>
+                    <BudgetProgressCard
+                        title={`${selectedMonth} Budget Progress`}
+                        spent={totalSpent}
+                        budgetAmount={totalBudget}
+                        percentUsed={totalPercentUsed}
+                    />
+
+                    <div className="flex flex-wrap justify-start">
+                        {budgetSummaries.map(({ budget, spent, percentUsed }) => (
+                            <BudgetCard
+                                key={budget.id}
+                                budget={budget}
+                                spent={spent}
+                                percentUsed={percentUsed}
+                            />
+                        ))}
                     </div>
-                </div>
-                {/* Previous Slide */}
-                <button type="button" className="carousel-prev start-5 max-sm:start-3 carousel-disabled:opacity-50 size-9.5 bg-transparent flex items-center justify-center rounded-full opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100">
-                    <span className="icon-[tabler--chevron-left] size-5 cursor-pointer"></span>
-                    <span className="sr-only">Previous</span>
-                </button>
-                {/* Next Slide */}
-                <button type="button" className="carousel-next end-5 max-sm:end-3 carousel-disabled:opacity-50 size-9.5 bg-transparent flex items-center justify-center rounded-full opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100">
-                    <span className="icon-[tabler--chevron-right] size-5"></span>
-                    <span className="sr-only">Next</span>
-                </button>
-            </div>
+                </>
+            ) : null}
         </div>
     );
 }

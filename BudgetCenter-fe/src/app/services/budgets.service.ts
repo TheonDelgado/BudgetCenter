@@ -2,17 +2,17 @@ import type { Budget } from '../../types/budget';
 
 export async function createBudgetItem(
     name: string,
+    category: string,
     amount: number,
     type: string,
-    periodStart: string,
-    periodEnd: string,
+    month: string,
 ): Promise<Budget> {
     const response = await fetch('http://localhost:8000/create-budget', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, amount, type, periodStart, periodEnd }),
+        body: JSON.stringify({ name, category, amount, type, month }),
     });
 
     if (!response.ok) {

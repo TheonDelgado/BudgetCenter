@@ -15,7 +15,7 @@ export default function SavingsCard() {
                         </span>
                         <span className="slash mx-0.5">/</span>
                         <span>
-                            <strong className="saved-goal-num pr-30">$3,500</strong>
+                            <strong className="saved-goal-num">$3,500</strong>
                         </span>
                         <span className="savings-percent">82%</span>
                     </div>

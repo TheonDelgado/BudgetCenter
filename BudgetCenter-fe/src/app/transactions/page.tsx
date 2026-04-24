@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import { useTransactionsContext } from '../../context/transactions-context'
 import './transactions.css'
+import { DEFAULT_BUDGET_CATEGORY } from '../../utils/budgetCategoryMap'
 
 export default function Transactions() {
     const { transactions, isLoading, error, refreshTransactions } = useTransactionsContext()
@@ -56,6 +57,7 @@ export default function Transactions() {
                         <tr>
                             <th>Date</th>
                             <th>Description</th>
+                            <th>Category</th>
                             <th>Institution</th>
                             <th>Status</th>
                             <th>Amount</th>
@@ -64,13 +66,13 @@ export default function Transactions() {
                     <tbody>
                         {isLoading ? (
                             <tr>
-                                <td colSpan={5}>Loading transactions...</td>
+                                <td colSpan={6}>Loading transactions...</td>
                             </tr>
                         ) : null}
 
                         {!isLoading && filteredTransactions.length === 0 ? (
                             <tr>
-                                <td colSpan={5}>No transactions found.</td>
+                                <td colSpan={6}>No transactions found.</td>
                             </tr>
                         ) : null}
 
@@ -82,11 +84,13 @@ export default function Transactions() {
                                 const description = transaction.merchant_name
                                     ?? transaction.name
                                     ?? 'Transaction'
+                                const categoryName = transaction.budgetCategoryName ?? DEFAULT_BUDGET_CATEGORY
 
                                 return (
                                     <tr className='row-hover' key={transaction.transaction_id}>
                                         <td>{transaction.authorized_date ?? transaction.date}</td>
                                         <td>{description}</td>
+                                        <td>{categoryName}</td>
                                         <td>{transaction.institutionName ?? 'Linked institution'}</td>
                                         <td>
                                             <span className={`badge badge-soft text-xs ${transaction.pending ? 'pending-badge' : 'posted-badge'}`}>

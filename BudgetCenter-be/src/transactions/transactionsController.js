@@ -2,6 +2,7 @@ require('dotenv').config();
 const prisma = require('../../db.js');
 const { client } = require('../plaid.client');
 const { ensureDefaultUser } = require('../users/defaultUser');
+const { mapTransactionToBudgetCategory } = require('./budgetCategoryMap');
 
 function getLast90DaysRange() {
 	const endDate = new Date();
@@ -92,12 +93,19 @@ async function getTransactions(req, res) {
 						const transactionDate = transaction.authorized_date || transaction.date;
 						return transactionDate && transactionDate >= range.startDate && transactionDate <= range.endDate;
 					})
-					.map((transaction) => ({
-					...transaction,
-					budgetCenterItemId: plaidItem.id,
-					plaidItemId: plaidItem.itemId,
-					institutionName: plaidItem.institutionName,
-					}));
+					.map((transaction) => {
+					const category = mapTransactionToBudgetCategory(transaction);
+
+					return {
+						...transaction,
+						budgetCenterItemId: plaidItem.id,
+						plaidItemId: plaidItem.itemId,
+						institutionName: plaidItem.institutionName,
+						budgetCategoryKey: category.budgetCategoryKey,
+						budgetCategoryName: category.budgetCategoryName,
+						isSpending: category.isSpending,
+					};
+					});
 			}),
 		);
 

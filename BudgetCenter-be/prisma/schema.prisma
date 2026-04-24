@@ -32,9 +32,9 @@ model Budget {
   id              Int      @id @default(autoincrement())
   userId          Int      
   name            String   
+  category        String   @default("Uncategorized")
   amount          Decimal  @db.Decimal(15, 2)
-  periodStart     String
-  periodEnd       String
+  month           String
   type            String    
   createdAt       DateTime
   updatedAt       DateTime @updatedAt
