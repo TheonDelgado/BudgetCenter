@@ -1,10 +1,12 @@
 import "./AddBudgetModal.css"
-import { useState, type ChangeEvent, type FormEvent } from "react"
+import { useRef, useState, type ChangeEvent, type FormEvent } from "react"
 import { createBudgetItem } from "../../app/services/budgets.service"
 
 export default function AddButtonModal() {
+    const closeModalButtonRef = useRef<HTMLButtonElement | null>(null);
     const [name, setName] = useState("");
     const [amount, setAmount] = useState("");
+    const [type, setType] = useState("");
     const [periodStart, setPeriodStart] = useState("");
     const [periodEnd, setPeriodEnd] = useState("");
 
@@ -17,7 +19,13 @@ export default function AddButtonModal() {
 
     async function createBudget(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        await createBudgetItem(name, Number(amount), periodStart, periodEnd);
+        await createBudgetItem(name, Number(amount), type, periodStart, periodEnd);
+        setName("");
+        setAmount("");
+        setType("");
+        setPeriodStart("");
+        setPeriodEnd("");
+        closeModalButtonRef.current?.click();
     }
 
     return (
@@ -26,7 +34,7 @@ export default function AddButtonModal() {
                 <div className="modal-content">
                     <div className="modal-header">
                         <h3 className="modal-title">Add Budget</h3>
-                        <button type="button" className="btn btn-text btn-circle btn-sm absolute end-3 top-3" aria-label="Close" data-overlay="#slide-up-animated-modal">
+                        <button type="button" className="btn btn-text btn-circle btn-sm absolute end-3 top-3" aria-label="Close" data-overlay="#slide-up-animated-modal" ref={closeModalButtonRef}>
                             <span className="icon-[tabler--x] size-4"></span>
                         </button>
                     </div>
@@ -36,6 +44,12 @@ export default function AddButtonModal() {
                             <input type="text" id="budget-name" placeholder="Enter Name of Budget" className="input w-full" value={name} onChange={e => setName(e.target.value)} />
                             <label htmlFor="budget-amount" className="budget-amount-label">Budget Amount</label>
                             <input type="text" id="budget-amount" placeholder="Enter Amount" className="input w-full" value={amount} inputMode="decimal" onChange={handleAmountChange} />
+                            <label htmlFor="budget-type" className="budget-type-label">Budget Type</label>
+                            <select id="budget-type" className="select max-w-sm appearance-none" aria-label="select" value={type} onChange={e => setType(e.target.value)}>
+                                <option disabled value="">Choose Type:</option>
+                                <option>Monthly</option>
+                                <option>Misc</option>
+                            </select>
                             <label htmlFor="start-date" className="start-date-label">Choose a Start Month</label>
                             <select id="start-date" className="select max-w-sm appearance-none" aria-label="select" value={periodStart} onChange={e => setPeriodStart(e.target.value)}>
                                 <option disabled value="">Choose Start Month:</option>

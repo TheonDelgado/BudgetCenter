@@ -1,0 +1,42 @@
+.transactions-page {
+    background-color: white;
+    color: black;
+    margin: 2rem;
+}
+
+.welcome-text {
+    font-size: 14px;
+}
+
+.main-header {
+    font-size: 36px;
+}
+
+.top-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.bottom-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.refresh-button {
+    align-self: center;
+}
+
+.search-box {
+    background-color: white;
+    color: black;
+}
+
+.pending-badge {
+    color: #9a3412;
+    background: #ffedd5;
+}
+
+.posted-badge {
+    color: #065f46;
+    background: #d1fae5;
+}

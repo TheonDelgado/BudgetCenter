@@ -5,12 +5,12 @@ const { ensureDefaultUser } = require('../users/defaultUser');
 
 async function createBudget(req, res) {
     try {
-        const { name, amount, periodStart, periodEnd } = req.body ?? {};
+        const { name, amount, type, periodStart, periodEnd } = req.body ?? {};
 
-        if (!name || !amount || !periodStart || !periodEnd) {
+        if (!name || !amount || !type || !periodStart || !periodEnd) {
             return res.status(400).json({
                 error: 'Missing required fields',
-                details: 'name, amount, periodStart, and periodEnd are required.',
+                details: 'name, amount, type, periodStart, and periodEnd are required.',
             });
         }
 
@@ -18,6 +18,7 @@ async function createBudget(req, res) {
         const normalizedStart = String(periodStart).trim();
         const normalizedEnd = String(periodEnd).trim();
         const normalizedAmount = String(amount).trim();
+        const normalizedType = String(type).trim();
         const numericAmount = Number(normalizedAmount);
 
         if (!normalizedName) {
@@ -51,12 +52,27 @@ async function createBudget(req, res) {
             });
         }
 
+        if (!normalizedType) {
+            return res.status(400).json({
+                error: 'Invalid type',
+                details: 'type cannot be empty.',
+            });
+        }
+
+        if (!['Monthly', 'Misc'].includes(normalizedType)) {
+            return res.status(400).json({
+                error: 'Invalid type',
+                details: 'type must be either "Monthly" or "Misc".',
+            });
+        }
+
         const currentUser = await ensureDefaultUser();
         const budget = await prisma.budget.create({
             data: {
                 userId: currentUser.id,
                 name: normalizedName,
                 amount: decimalAmount,
+                type: normalizedType,
                 periodStart: normalizedStart,
                 periodEnd: normalizedEnd,
                 createdAt: new Date(),
@@ -66,6 +82,7 @@ async function createBudget(req, res) {
                 userId: true,
                 name: true,
                 amount: true,
+                type: true,
                 periodStart: true,
                 periodEnd: true,
                 createdAt: true,
@@ -96,6 +113,7 @@ async function getBudgets(req, res) {
                 userId: true,
                 name: true,
                 amount: true,
+                type: true,
                 periodStart: true,
                 periodEnd: true,
                 createdAt: true,

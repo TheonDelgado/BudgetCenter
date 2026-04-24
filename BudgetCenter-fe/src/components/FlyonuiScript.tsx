@@ -13,6 +13,15 @@ async function loadFlyonUI() {
 }
 
 export default function FlyonuiScript() {
+
+  useEffect(() => {
+    const guard = (e: KeyboardEvent) => {
+      if (e.key === undefined || e.key === null) e.stopImmediatePropagation();
+    };
+    document.addEventListener('keydown', guard, { capture: true });
+    return () => document.removeEventListener('keydown', guard, { capture: true });
+  }, []);
+
   const path = usePathname();
 
   useEffect(() => {

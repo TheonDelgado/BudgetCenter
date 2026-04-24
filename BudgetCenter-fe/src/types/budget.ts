@@ -5,6 +5,7 @@ export type Budget = {
     amount: number,
     periodStart: string,
     periodEnd: string,
+    type: string,
     createdAt: Date,
     updatedAt: Date 
 }

@@ -32,9 +32,10 @@ model Budget {
   id              Int      @id @default(autoincrement())
   userId          Int      
   name            String   
-  amount          Decimal
+  amount          Decimal  @db.Decimal(15, 2)
   periodStart     String
   periodEnd       String
+  type            String    
   createdAt       DateTime
   updatedAt       DateTime @updatedAt
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)

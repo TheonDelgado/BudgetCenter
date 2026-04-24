@@ -33,6 +33,9 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
 		try {
 			const nextBudgets = await getBudgetItems()
 			setBudgets(nextBudgets)
+
+			console.log(nextBudgets);
+
 			setError(null)
 			return nextBudgets
 		} catch (loadError) {

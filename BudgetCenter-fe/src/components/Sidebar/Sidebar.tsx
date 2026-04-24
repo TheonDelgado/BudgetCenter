@@ -20,6 +20,11 @@ const navItems = [
         href: '/budgets',
         label: 'Budgets',
         icon: 'icon-[tabler--moneybag]'
+    },
+    {
+        href: '/transactions',
+        label: 'Transactions',
+        icon: 'icon-[tabler--receipt]'
     }
 ];
 

@@ -3,6 +3,7 @@ import type { Budget } from '../../types/budget';
 export async function createBudgetItem(
     name: string,
     amount: number,
+    type: string,
     periodStart: string,
     periodEnd: string,
 ): Promise<Budget> {
@@ -11,7 +12,7 @@ export async function createBudgetItem(
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, amount, periodStart, periodEnd }),
+        body: JSON.stringify({ name, amount, type, periodStart, periodEnd }),
     });
 
     if (!response.ok) {

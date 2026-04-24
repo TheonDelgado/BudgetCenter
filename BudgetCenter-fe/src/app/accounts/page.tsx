@@ -114,9 +114,6 @@ export default function Accounts() {
 
             <h4 className="welcome-text">Welcome User</h4>
 
-            {linkError ? <div className="alert alert-soft alert-error my-4">{linkError}</div> : null}
-            {!linkError && accountsError ? <div className="alert alert-soft alert-warning my-4">{accountsError}</div> : null}
-
             {linkToken ? <PlaidLinkReadyState linkToken={linkToken} onLinkSuccess={onSuccess} onLinkExit={onExit} /> : <>
                 <div className="top-header">
                     <h1 className="main-header">Manage Your Accounts</h1>

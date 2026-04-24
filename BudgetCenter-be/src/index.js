@@ -4,6 +4,7 @@ const app = express();
 const { createLink, exchangeLink } = require("./link-handler/linkController.js");
 const { getAccounts } = require("./accounts/accountsController.js");
 const { createBudget, getBudgets } = require("./budgets/budgetsController.js");
+const { getTransactions } = require("./transactions/transactionsController.js");
 
 const APP_PORT = process.env.APP_PORT || 8000;
 
@@ -14,6 +15,7 @@ app.post('/create-link', createLink);
 app.post('/exchange-token', exchangeLink);
 
 app.get('/accounts', getAccounts);
+app.get('/transactions', getTransactions);
 app.post('/create-budget', createBudget);
 app.get('/budgets', getBudgets);
 

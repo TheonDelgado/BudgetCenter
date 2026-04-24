@@ -3,11 +3,14 @@
 import { ReactNode } from 'react'
 import { AccountsProvider } from './accounts-context'
 import { BudgetProvider } from './budget-context'
+import { TransactionsProvider } from './transactions-context'
 
 export default function AppProviders({ children }: { children: ReactNode }) {
     return (
         <AccountsProvider>
-            <BudgetProvider>{children}</BudgetProvider>
+            <BudgetProvider>
+                <TransactionsProvider>{children}</TransactionsProvider>
+            </BudgetProvider>
         </AccountsProvider>
     )
 }
