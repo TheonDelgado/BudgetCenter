@@ -1,5 +1,5 @@
 import "./AddBudgetModal.css"
-import { useRef, useState, type ChangeEvent, type FormEvent } from "react"
+import { useState, type ChangeEvent, type FormEvent } from "react"
 import { createBudgetItem } from "../../app/services/budgets.service"
 import { SPENDING_BUDGET_CATEGORY_OPTIONS } from "../../utils/budgetCategoryMap"
 
@@ -15,8 +15,7 @@ function getMonthOptions(baseDate = new Date()) {
     })
 }
 
-export default function AddButtonModal() {
-    const closeModalButtonRef = useRef<HTMLButtonElement | null>(null);
+export default function AddButtonModal({ refreshBudgets }) {
     const [name, setName] = useState("");
     const [category, setCategory] = useState("");
     const [amount, setAmount] = useState("");
@@ -31,6 +30,24 @@ export default function AddButtonModal() {
         }
     }
 
+    function closeModal() {
+        const overlay = (window as Window & {
+            HSOverlay?: {
+                getInstance: (
+                    target: string,
+                    isInstance?: boolean
+                ) => { element?: { close: (immediate?: boolean) => Promise<unknown> } } | null
+            }
+        }).HSOverlay
+
+        const instance = overlay?.getInstance("#slide-up-animated-modal", true)
+        instance?.element?.close(true)
+
+        document.querySelector("#slide-up-animated-modal-backdrop")?.remove()
+        document.body.style.overflow = ""
+        document.body.classList.remove("overlay-body-open")
+    }
+
     async function createBudget(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         await createBudgetItem(name, category, Number(amount), type, month);
@@ -39,16 +56,17 @@ export default function AddButtonModal() {
         setAmount("");
         setType("");
         setMonth("");
-        closeModalButtonRef.current?.click();
+        closeModal();
+        refreshBudgets();
     }
 
     return (
-        <div id="slide-up-animated-modal" className="overlay modal overlay-open:opacity-100 overlay-open:duration-300 hidden" role="dialog" tabIndex={-1}>
+        <div id="slide-up-animated-modal" className="overlay modal [--overlay-backdrop:static] overlay-open:opacity-100 overlay-open:duration-300 hidden" role="dialog" tabIndex={-1} data-overlay-keyboard="false">
             <div className="overlay-animation-target modal-dialog overlay-open:mt-4 overlay-open:duration-300 mt-12 transition-all ease-out" >
                 <div className="modal-content">
                     <div className="modal-header">
                         <h3 className="modal-title">Add Budget</h3>
-                        <button type="button" className="btn btn-text btn-circle btn-sm absolute inset-e-3 top-3" aria-label="Close" data-overlay="#slide-up-animated-modal" ref={closeModalButtonRef}>
+                        <button type="button" className="btn btn-text btn-circle btn-sm absolute inset-e-3 top-3" aria-label="Close" onClick={closeModal}>
                             <span className="icon-[tabler--x] size-4"></span>
                         </button>
                     </div>
@@ -79,7 +97,7 @@ export default function AddButtonModal() {
                                 ))}
                             </select>
                             <div className="modal-footer">
-                                <button type="button" className="btn btn-soft bg-white text-black" data-overlay="#slide-up-animated-modal">
+                                <button type="button" className="btn btn-soft bg-white text-black" onClick={closeModal}>
                                     Close
                                 </button>
                                 <button type="submit" className="btn btn-primary">Save changes</button>

@@ -27,7 +27,7 @@ function toMonthLabel(value?: string | null) {
 }
 
 export function useMonthlyBudgetSummary() {
-    const { budgetsForSelectedMonth, selectedMonth } = useBudgetContext()
+    const { budgetsForSelectedMonth, selectedMonth, refreshBudgets } = useBudgetContext()
     const { transactions } = useTransactionsContext()
 
     const budgetSummaries = useMemo(() => {
@@ -81,5 +81,6 @@ export function useMonthlyBudgetSummary() {
         totalSpent,
         totalPercentUsed,
         selectedMonth,
+        refreshBudgets
     }
 }

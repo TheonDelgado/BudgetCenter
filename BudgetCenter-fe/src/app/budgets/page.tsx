@@ -10,7 +10,13 @@ import { useMonthlyBudgetSummary } from "../../context/monthly-budget-summary";
 
 export default function Budgets() {
     const { isLoading, error: budgetsError, selectedMonth, setSelectedMonth, monthOptions } = useBudgetContext();
-    const { budgetSummaries, totalSpent, totalBudget, totalPercentUsed } = useMonthlyBudgetSummary()
+    const { budgetSummaries, totalSpent, totalBudget, totalPercentUsed, refreshBudgets } = useMonthlyBudgetSummary()
+
+    function openAddBudgetModal() {
+        (window as Window & {
+            HSOverlay?: { open: (target: string) => void }
+        }).HSOverlay?.open("#slide-up-animated-modal")
+    }
 
     return (
         <div className="budgets-page">
@@ -27,13 +33,13 @@ export default function Budgets() {
             </div>
 
             <div className="bottom-part pt-4">
-                <button type="button" className="btn btn-primary" aria-haspopup="dialog" aria-expanded="false" aria-controls="slide-up-animated-modal" data-overlay="#slide-up-animated-modal">
+                <button type="button" className="btn btn-primary" aria-haspopup="dialog" aria-expanded="false" aria-controls="slide-up-animated-modal" onClick={openAddBudgetModal}>
                     <span className="icon-[tabler--plus-filled]"></span>
                     <span>Add New Budget</span>
                 </button>
             </div>
 
-            <AddButtonModal/>
+            <AddButtonModal refreshBudgets={refreshBudgets}/>
 
             {budgetsError ? <div className="alert alert-soft alert-error mt-4">{budgetsError}</div> : null}
 
