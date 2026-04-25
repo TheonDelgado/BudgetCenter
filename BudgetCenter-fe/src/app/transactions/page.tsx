@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTransactionsContext } from '../../context/transactions-context'
 import './transactions.css'
 import { DEFAULT_BUDGET_CATEGORY } from '../../utils/budgetCategoryMap'
@@ -8,6 +8,7 @@ import { DEFAULT_BUDGET_CATEGORY } from '../../utils/budgetCategoryMap'
 export default function Transactions() {
     const { transactions, isLoading, error, refreshTransactions } = useTransactionsContext()
     const [searchTerm, setSearchTerm] = useState('')
+    const [loadedTransactions, setLoadedTransactions] = useState(transactions);
 
     const filteredTransactions = useMemo(() => {
         const normalizedSearch = searchTerm.trim().toLowerCase()
@@ -25,6 +26,10 @@ export default function Transactions() {
                 || institution.includes(normalizedSearch)
         })
     }, [searchTerm, transactions])
+
+    useEffect(() =>{
+        refreshTransactions();
+    }, [])
 
     return (
         <div className='transactions-page'>

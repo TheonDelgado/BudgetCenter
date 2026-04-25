@@ -40,3 +40,7 @@
     color: #065f46;
     background: #d1fae5;
 }
+
+.row-hover:hover {
+    background-color: rgb(238, 238, 238);
+}

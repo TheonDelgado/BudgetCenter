@@ -41,7 +41,6 @@ export default function RootLayout({ children }) {
         <script src="/lodash.js"></script>
         <script src="/apexcharts.js"></script>
         <Script src="/helper-apexcharts.js" strategy="beforeInteractive" />
-        <Script src="/budgetChart.js" strategy="afterInteractive" />
       </body>
     </html>
   );
