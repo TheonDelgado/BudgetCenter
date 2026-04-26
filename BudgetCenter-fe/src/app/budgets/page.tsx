@@ -5,17 +5,26 @@ import "./budgets.css"
 import BudgetProgressCard from "../../components/BudgetProgressCard/BudgetProgressCard";
 import BudgetCard from "../../components/BudgetCard/BudgetCard";
 import AddButtonModal from "../../components/AddBudgetModal/AddBudgetModal";
+import AddSavingsGoalModal from "../../components/AddSavingsGoalModal/AddSavingsGoalModal";
 import { useBudgetContext } from "../../context/budget-context";
 import { useMonthlyBudgetSummary } from "../../context/monthly-budget-summary";
+import { useSavingsContext } from "../../context/savings-context";
 
 export default function Budgets() {
     const { isLoading, error: budgetsError, selectedMonth, setSelectedMonth, monthOptions } = useBudgetContext();
     const { budgetSummaries, totalSpent, totalBudget, totalPercentUsed, refreshBudgets } = useMonthlyBudgetSummary()
+    const { summary, isSavingGoal, error: savingsError, saveMonthlyGoal, clearSavingsError } = useSavingsContext()
 
     function openAddBudgetModal() {
         (window as Window & {
             HSOverlay?: { open: (target: string) => void }
         }).HSOverlay?.open("#slide-up-animated-modal")
+    }
+
+    function openSavingsGoalModal() {
+        (window as Window & {
+            HSOverlay?: { open: (target: string) => void }
+        }).HSOverlay?.open("#slide-up-savings-goal-modal")
     }
 
     return (
@@ -37,9 +46,21 @@ export default function Budgets() {
                     <span className="icon-[tabler--plus-filled]"></span>
                     <span>Add New Budget</span>
                 </button>
+                <button type="button" className="btn btn-soft" aria-haspopup="dialog" aria-expanded="false" aria-controls="slide-up-savings-goal-modal" onClick={openSavingsGoalModal}>
+                    <span className="icon-[tabler--target-arrow]"></span>
+                    <span>Set Savings Goal</span>
+                </button>
             </div>
 
             <AddButtonModal refreshBudgets={refreshBudgets}/>
+            <AddSavingsGoalModal
+                selectedMonth={selectedMonth}
+                initialAmount={summary?.targetAmount ?? 0}
+                isSaving={isSavingGoal}
+                error={savingsError}
+                onSave={saveMonthlyGoal}
+                onClearError={clearSavingsError}
+            />
 
             {budgetsError ? <div className="alert alert-soft alert-error mt-4">{budgetsError}</div> : null}
 
