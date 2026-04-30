@@ -1,6 +1,16 @@
 let chartInstance = null
 
-export function renderChart() {
+function toCurrencyCompact(value) {
+  const numericValue = Number(value) || 0
+
+  if (Math.abs(numericValue) >= 1000) {
+    return `$${(numericValue / 1000).toFixed(1)}k`
+  }
+
+  return `$${Math.round(numericValue)}`
+}
+
+export function renderChart({ monthLabels = [], budgetAmounts = [], savingsAmounts = [] } = {}) {
   if (chartInstance?.destroy) {
     chartInstance.destroy()
     chartInstance = null
@@ -10,6 +20,10 @@ export function renderChart() {
   if (!chartElement) return null
 
   chartElement.innerHTML = ''
+
+  const categories = Array.isArray(monthLabels) && monthLabels.length ? monthLabels : ['No Data']
+  const budgetSeries = categories.map((_, index) => Number(budgetAmounts?.[index]) || 0)
+  const savingsSeries = categories.map((_, index) => Number(savingsAmounts?.[index]) || 0)
 
   chartInstance = buildChart('#apex-multiple-column-charts', () => ({
     chart: {
@@ -24,12 +38,12 @@ export function renderChart() {
     },
     series: [
       {
-        name: 'Spent',
-        data: [25000, 47000, 59000, 67000, 66000, 66000, 78000, 43000, 40000, 56000, 54000, 78000]
+        name: 'Budget Progress',
+        data: budgetSeries
       },
       {
-        name: 'Budget',
-        data: [34000, 56000, 85000, 90000, 70000, 80000, 100000, 40000, 50000, 44000, 47000, 96000]
+        name: 'Savings Progress',
+        data: savingsSeries
       }
     ],
     plotOptions: {
@@ -55,20 +69,7 @@ export function renderChart() {
     },
     colors: ['var(--color-primary)', 'var(--color-success)'],
     xaxis: {
-      categories: [
-        'Cook',
-        'Erin',
-        'Jack',
-        'Will',
-        'Gayle',
-        'Megan',
-        'John',
-        'Luke',
-        'Ellis',
-        'Mason',
-        'Elvis',
-        'Liam'
-      ],
+      categories,
       axisBorder: {
         show: false
       },
@@ -96,7 +97,7 @@ export function renderChart() {
           fontSize: '12px',
           fontWeight: 400
         },
-        formatter: value => (value >= 1000 ? `${value / 1000}k` : value)
+        formatter: value => toCurrencyCompact(value)
       }
     },
     states: {
@@ -109,7 +110,7 @@ export function renderChart() {
     },
     tooltip: {
       y: {
-        formatter: value => `$${value >= 1000 ? `${value / 1000}k` : value}`
+        formatter: value => toCurrencyCompact(value)
       },
       custom: function (props) {
         const categories = props.w?.config?.xaxis?.categories || []
@@ -162,7 +163,7 @@ export function renderChart() {
                 fontSize: '10px',
                 colors: 'var(--color-base-content)'
               },
-              formatter: value => (value >= 1000 ? `${value / 1000}k` : value)
+              formatter: value => toCurrencyCompact(value)
             }
           }
         }
