@@ -12,6 +12,8 @@ import { useMonthlyBudgetSummary } from "../context/monthly-budget-summary";
 import { useSavingsContext } from "../context/savings-context";
 import { useTransactionsContext } from "../context/transactions-context";
 
+const HOME_BUDGET_PROGRESS_SELECTOR = "#apex-home-budgets-progress-chart";
+
 function toMonthLabel(value) {
   if (!value) {
     return "";
@@ -55,7 +57,7 @@ function toMonthDate(label) {
 export default function Home() {
   const { selectedMonth, setSelectedMonth, monthOptions, budgets } = useBudgetContext();
   const { totalSpent, totalBudget, totalPercentUsed } = useMonthlyBudgetSummary()
-  const { trend } = useSavingsContext();
+  const { summary, trend } = useSavingsContext();
   const { transactions } = useTransactionsContext();
 
   const chartData = useMemo(() => {
@@ -97,7 +99,7 @@ export default function Home() {
           return budgetSum + spentForCategory;
         }, 0);
 
-        return [monthKey, monthSpent];
+        return [monthKey, Math.round(monthSpent * 100) / 100];
       }),
     );
 
@@ -132,22 +134,30 @@ export default function Home() {
 
     return {
       monthLabels: months,
-      budgetAmounts: months.map((month) => budgetProgressByMonth.get(month) ?? 0),
-      savingsAmounts: months.map((month) => savingsProgressByMonth.get(month) ?? 0),
+      budgetProgressAmounts: months.map((month) => budgetProgressByMonth.get(month) ?? 0),
+      savingsProgressAmounts: months.map((month) => savingsProgressByMonth.get(month) ?? 0),
     };
   }, [budgets, transactions, trend]);
 
   useEffect(() => {
     renderChart({
+      selector: HOME_BUDGET_PROGRESS_SELECTOR,
       monthLabels: chartData.monthLabels,
-      budgetAmounts: chartData.budgetAmounts,
-      savingsAmounts: chartData.savingsAmounts,
+      spentAmounts: chartData.budgetProgressAmounts,
+      budgetAmounts: chartData.savingsProgressAmounts,
+      primarySeriesName: "Budget Progress",
+      secondarySeriesName: "Savings Progress",
+      colors: ['var(--color-primary)', 'var(--color-success)'],
+      goalLines: [
+        { name: 'Budget', value: totalBudget, color: 'var(--color-primary)' },
+        { name: 'Savings Goal', value: summary?.targetAmount ?? 0, color: 'var(--color-success)' },
+      ],
     });
 
     return () => {
-      destroyChart();
+      destroyChart(HOME_BUDGET_PROGRESS_SELECTOR);
     };
-  }, [chartData.budgetAmounts, chartData.monthLabels, chartData.savingsAmounts])
+  }, [chartData, summary?.targetAmount, totalBudget])
 
   return (
     <div className="dashboard">
@@ -175,7 +185,8 @@ export default function Home() {
       </div>
 
       <div className="budget-chart m-2">
-        <div id="apex-multiple-column-charts" className="w-full"></div>
+        <h2 className="text-lg font-semibold mb-2">Budget and Spending Progress</h2>
+        <div id="apex-home-budgets-progress-chart" className="w-full"></div>
       </div>
 
     </div>

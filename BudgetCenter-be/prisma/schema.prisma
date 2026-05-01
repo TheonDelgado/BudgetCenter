@@ -13,6 +13,7 @@ model User {
   plaidItems PlaidItem[]
   budgets    Budget[]
   savingsGoals SavingsGoal[]
+  balanceSnapshots BalanceSnapshot[]
 }
 
 model PlaidItem {
@@ -66,4 +67,17 @@ model SavingsSnapshot {
   @@index([userId, monthKey])
   @@unique([userId, monthKey, accountId])
 
+}
+
+model BalanceSnapshot {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  monthKey        String
+  totalBalance    Decimal  @db.Decimal(15,2)
+  capturedAt      DateTime
+  createdAt       DateTime
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, monthKey])
+  @@unique([userId, monthKey])
 }

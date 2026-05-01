@@ -31,6 +31,10 @@ type SavingsContextValue = {
 
 const SavingsContext = createContext<SavingsContextValue | undefined>(undefined)
 
+function toCurrentMonthLabel(date = new Date()) {
+    return new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(date)
+}
+
 export function SavingsProvider({ children }: { children: ReactNode }) {
     const { selectedMonth } = useBudgetContext()
     const [summary, setSummary] = useState<SavingsSummary | null>(null)
@@ -43,7 +47,11 @@ export function SavingsProvider({ children }: { children: ReactNode }) {
         setIsLoading(true)
 
         try {
-            await ingestSavingsSnapshot(selectedMonth)
+            const currentMonthLabel = toCurrentMonthLabel()
+            if (selectedMonth === currentMonthLabel) {
+                await ingestSavingsSnapshot(selectedMonth)
+            }
+
             const [nextSummary, nextTrend] = await Promise.all([
                 getSavingsMonthlySummary(selectedMonth),
                 getSavingsTrend(6),

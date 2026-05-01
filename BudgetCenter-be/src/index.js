@@ -11,6 +11,10 @@ const {
   getSavingsMonthlySummaryHandler,
   getSavingsTrendHandler,
 } = require('./savingsGoals/savingsGoalsController.js');
+const {
+  ingestBalanceSnapshotForMonth,
+  getBalanceMonthlySummaryHandler,
+} = require('./balanceSnapshots/balanceSnapshotsController.js');
 
 const APP_PORT = process.env.APP_PORT || 8000;
 
@@ -28,6 +32,8 @@ app.post('/savings-goals', createOrUpdateSavingsGoal);
 app.post('/savings-snapshots/ingest', ingestSavingsSnapshotForMonth);
 app.get('/savings-summary', getSavingsMonthlySummaryHandler);
 app.get('/savings-trend', getSavingsTrendHandler);
+app.post('/balance-snapshots/ingest', ingestBalanceSnapshotForMonth);
+app.get('/balance-summary', getBalanceMonthlySummaryHandler);
 
 app.listen(APP_PORT, () => {
   console.log(`Server is listening on Port ${APP_PORT}`);
